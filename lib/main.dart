@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:menu_app/pages/bottom_nav_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:menu_app/pages/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +16,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Casino App',
-      home: BottomNavPage(),
+      home: LoginPage(),
 
     );
   }
