@@ -22,7 +22,6 @@ class LoginPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 32),
-              // Icono o logo central
               Center(
                 child: CircleAvatar(
                   radius: 50,
@@ -35,11 +34,10 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              // Campo de email/teléfono
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
-                  labelText: 'Email o Teléfono',
+                  labelText: 'Email',
                   prefixIcon: const Icon(Icons.person),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
@@ -49,7 +47,6 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              // Campo de contraseña
               TextField(
                 controller: passwordController,
                 obscureText: true,
@@ -64,29 +61,24 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              // Botón de inicio de sesión
               ElevatedButton(
                 onPressed: () async {
-                  // Obtiene las credenciales del usuario
                   String emailOrPhone = emailController.text.trim();
                   String password = passwordController.text.trim();
 
                   try {
-                    // Autenticación con Firebase
                     UserCredential userCredential =
                         await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: emailOrPhone,
                       password: password,
                     );
 
-                    // Si la autenticación es exitosa, navega a BottomNavPage
                     print('Usuario autenticado: ${userCredential.user?.email}');
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const BottomNavPage()),
                     );
                   } on FirebaseAuthException catch (e) {
-                    // Manejo de errores de autenticación
                     String message;
                     if (e.code == 'user-not-found') {
                       message = 'No hay ningún usuario registrado con este correo.';
@@ -95,7 +87,6 @@ class LoginPage extends StatelessWidget {
                     } else {
                       message = 'Error al iniciar sesión. Intenta de nuevo.';
                     }
-                    // Muestra un mensaje de error
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(

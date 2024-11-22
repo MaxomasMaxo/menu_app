@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:menu_app/pages/information_page.dart';
+import 'package:menu_app/pages/login_page.dart';
 import 'package:menu_app/pages/tab_cesta_page.dart';
 import 'package:menu_app/pages/tab_home_page.dart';
 import 'package:menu_app/pages/tab_minuta_page.dart';
@@ -81,7 +83,6 @@ late List<Map<String, dynamic>> _paginas;
               title: Text('Carrito de Compras'),
               onTap: () {
                 Navigator.pop(context);
-                // Navegar a la pantalla del carrito (en desarrollo)
                 print("Navegar al carrito - En desarrollo");
               },
             ),
@@ -104,6 +105,33 @@ late List<Map<String, dynamic>> _paginas;
                   context,
                   MaterialPageRoute(builder: (context) => InformationPage()), // Navega a InformationScreen
                 );
+              },
+            ),ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Cerrar Sesión'),
+              onTap: () async {
+                try {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                } catch (e) {
+                  print('Error al cerrar sesión: $e');
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Error'),
+                      content: const Text('No se pudo cerrar sesión. Intenta de nuevo.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Cerrar'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               },
             ),
           ],
