@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TabCestaPage extends StatefulWidget {
   const TabCestaPage({super.key});
@@ -17,6 +19,7 @@ class _TabCestaPageState extends State<TabCestaPage> {
   void initState() {
     super.initState();
     fetchMeals();
+    fetchCartItems(); // Cargar elementos del carrito al iniciar
   }
 
   Future<void> fetchMeals() async {
@@ -26,17 +29,39 @@ class _TabCestaPageState extends State<TabCestaPage> {
         meals = json.decode(response.body)['meals'];
       });
     } else {
+      // Manejo de errores
     }
   }
 
-  void addToCart(meal) {
-    setState(() {
-      selectedMeals.add(meal);
-    });
+  Future<void> fetchCartItems() async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    User? user = FirebaseAuth.instance.currentUser ;
+
+    if (user != null) {
+      QuerySnapshot snapshot = await firestore.collection('users').doc(user.uid).collection('menu').get();
+      for (var doc in snapshot.docs) {
+        setState(() {
+          selectedMeals.add(doc.data() as Map<String, dynamic>);
+        });
+      }
+    }
+  }
+
+  Future<void> addToCart(Map<String, dynamic> meal) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    User? user = FirebaseAuth.instance.currentUser ;
+
+    if (user != null) {
+      await firestore.collection('users').doc(user.uid).collection('menu').add(meal);
+      setState(() {
+        selectedMeals.add(meal);
+      });
+    } else {
+      print("No hay usuario autenticado.");
+    }
   }
 
   void confirmPurchase() {
-    // Aquí puedes implementar la lógica para confirmar la compra
     showDialog(
       context: context,
       builder: (context) {
@@ -95,6 +120,10 @@ class _TabCestaPageState extends State<TabCestaPage> {
         onPressed: () {
           // Aquí puedes agregar lógica para seleccionar comidas
           // Por ejemplo, abrir un diálogo o una nueva pantalla
+          // Ejemplo: agregar la primera comida como demostración
+          if (meals.isNotEmpty) {
+            addToCart(meals[0]); // Agregar la primera comida como demostración
+          }
         },
         child: Icon(Icons.add),
         tooltip: 'Agregar Comida',

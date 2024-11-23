@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:menu_app/pages/meal_details_page.dart';
 import 'package:menu_app/provider/meal_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TabMinutaPage extends StatefulWidget {
   const TabMinutaPage({Key? key}) : super(key: key);
@@ -38,7 +40,7 @@ class _TabMinutaPageState extends State<TabMinutaPage> {
   }
 
   Future<void> fetchMealsByCategory() async {
-    if (searchController.text.isNotEmpty) return; // No buscar por categoría si hay una búsqueda activa
+    if (searchController.text.isNotEmpty) return; 
     try {
       var fetchedMeals = await mealProvider.getMealsByCategory(selectedCategory);
       setState(() {
@@ -56,12 +58,26 @@ class _TabMinutaPageState extends State<TabMinutaPage> {
     }
     try {
       var fetchedMeals = await mealProvider.searchMealsByName(query);
-      print('Fetched meals by name: $fetchedMeals'); // Verificar datos obtenidos
+      print('Fetched meals by name: $fetchedMeals');
       setState(() {
         meals = fetchedMeals;
       });
     } catch (e) {
       print('Error al buscar los platos: $e');
+    }
+  }
+
+  Future<void> addToCart(Map<String, dynamic> meal) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    User? user = FirebaseAuth.instance.currentUser ;
+
+    if (user != null) {
+      await firestore.collection('users').doc(user.uid).collection('menu').add(meal);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${meal['strMeal']} agregado al carrito')),
+      );
+    } else {
+      print("No hay usuario autenticado.");
     }
   }
 
@@ -94,8 +110,7 @@ class _TabMinutaPageState extends State<TabMinutaPage> {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      print("Meal details selected: $meal");  // Imprime el objeto para verificar datos
-                      Navigator.push(
+                      print("Meal details selected: $meal"); Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => MealDetailsPage(mealId: meal['idMeal']),
@@ -106,9 +121,8 @@ class _TabMinutaPageState extends State<TabMinutaPage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Agregado al carrito')),
-                      );
+                      Navigator.pop(context);
+                      addToCart(meal);
                     },
                     child: const Text('Agregar al carrito'),
                   ),

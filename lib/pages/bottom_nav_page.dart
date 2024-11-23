@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:menu_app/pages/information_page.dart';
 import 'package:menu_app/pages/login_page.dart';
 import 'package:menu_app/pages/tab_cesta_page.dart';
@@ -16,7 +17,7 @@ class BottomNavPage extends StatefulWidget {
 class _BottomNavPageState extends State<BottomNavPage> {
   int _currentIndex = 1;
 
-late List<Map<String, dynamic>> _paginas;
+  late List<Map<String, dynamic>> _paginas;
 
   @override
   void initState() {
@@ -32,8 +33,25 @@ late List<Map<String, dynamic>> _paginas;
     ];
   }
 
-  void _borrarCarrito() {
-    print("Borrar carrito - Método en desarrollo");
+  Future<void> _borrarCarrito() async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    User? user = FirebaseAuth.instance.currentUser ;
+
+    if (user != null) {
+      CollectionReference menuCollection = firestore.collection('users').doc(user.uid).collection('menu');
+
+      QuerySnapshot snapshot = await menuCollection.get();
+
+      for (var doc in snapshot.docs) {
+        await menuCollection.doc(doc.id).delete();
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Carrito borrado')),
+      );
+    } else {
+      print("No hay usuario autenticado.");
+    }
   }
 
   @override
@@ -83,7 +101,9 @@ late List<Map<String, dynamic>> _paginas;
               title: Text('Carrito de Compras'),
               onTap: () {
                 Navigator.pop(context);
-                print("Navegar al carrito - En desarrollo");
+                setState(() {
+                  _currentIndex = 2; 
+                });
               },
             ),
             ListTile(
@@ -91,31 +111,30 @@ late List<Map<String, dynamic>> _paginas;
               title: Text('Borrar Carrito'),
               onTap: () {
                 Navigator.pop(context);
-                _borrarCarrito();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Carrito borrado')),
-                );
+                _borrarCarrito(); 
               },
-            ),ListTile(
-              leading: Icon(Icons.info),
+            ),
+            ListTile(
+              leading: Icon(Icons.info ),
               title: Text('Información'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => InformationPage()), // Navega a InformationScreen
+                  MaterialPageRoute(builder: (context) => InformationPage()),
                 );
               },
-            ),ListTile(
+            ),
+            ListTile(
               leading: Icon(Icons.logout),
               title: Text('Cerrar Sesión'),
               onTap: () async {
                 try {
                   await FirebaseAuth.instance.signOut();
                   Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
                 } catch (e) {
                   print('Error al cerrar sesión: $e');
                   showDialog(

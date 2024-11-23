@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:menu_app/pages/meal_card.dart';
 import 'package:menu_app/provider/meal_provider.dart';
@@ -12,12 +13,27 @@ class TabHomePage extends StatefulWidget {
 class _TabHomePageState extends State<TabHomePage> {
   MealProvider mealProvider = MealProvider();
   Map<String, dynamic>? randomMeal;
+  String? _userEmail;
 
   @override
   void initState() {
     super.initState();
+    _fetchUserInfo();
     fetchRandomMeal();
   }
+
+  Future<void> _fetchUserInfo() async {
+    User? user = FirebaseAuth.instance.currentUser ;
+    if (user != null) {
+      for (final providerProfile in user.providerData) {
+        final emailAddress = providerProfile.email;
+
+        setState(() {
+          _userEmail = emailAddress;
+        });
+      }
+    }
+  } 
 
   Future<void> fetchRandomMeal() async {
     var meal = await mealProvider.getRandomMeal();
@@ -34,7 +50,7 @@ class _TabHomePageState extends State<TabHomePage> {
       padding: EdgeInsets.all(16),
       children: [
         Text(
-          'Hola!',
+          '¡Hola, $_userEmail!',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 20),

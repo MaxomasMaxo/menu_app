@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:menu_app/pages/meal_details_page.dart';
 
@@ -19,7 +21,7 @@ class MealCard extends StatelessWidget {
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
               child: Image.network(
-                meal['strMealThumb'] ?? '', // Verifica que no sea nulo
+                meal['strMealThumb'] ?? '',
                 height: 250,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -90,7 +92,8 @@ class MealCard extends StatelessWidget {
                     child: const Text('Ver detalles'),
                   ),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await _addToCart(meal);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Agregado al carrito')),
                       );
@@ -104,5 +107,22 @@ class MealCard extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _addToCart(Map<String, dynamic> meal) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    User? user = FirebaseAuth.instance.currentUser ;
+    
+    if (user != null) {
+      await firestore.collection('users').doc(user.uid).collection('menu').add({
+        'idMeal': meal['idMeal'],
+        'strMeal': meal['strMeal'],
+        'strCategory': meal['strCategory'],
+        'strMealThumb': meal['strMealThumb'],
+      });
+    } else {
+      print("No hay usuario autenticado.");
+    }
   }
 }

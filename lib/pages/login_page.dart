@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'bottom_nav_page.dart'; 
+import 'bottom_nav_page.dart';
+import 'register_page.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -103,7 +104,7 @@ class LoginPage extends StatelessWidget {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffff8b00), // Botón inicio
+                  backgroundColor: const Color(0xffff8b00),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -114,6 +115,16 @@ class LoginPage extends StatelessWidget {
                   style: TextStyle(color:Colors.white,fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
+              SizedBox(height: 20),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegisterPage()),
+                );
+              },
+              child: Text('¿No tienes una cuenta? Regístrate aquí'),
+            ),
             ],
           ),
         ),
