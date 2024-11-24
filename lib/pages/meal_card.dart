@@ -1,30 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:menu_app/pages/meal_details_page.dart';
-
+import 'package:menu_app/pages/meal_details_page.dart'; 
 class MealCard extends StatelessWidget {
-  final Map<String, dynamic> meal;
+  final Map<String, dynamic> meal; // Mapa que contiene información sobre la comida.
 
-  const MealCard({Key? key, required this.meal}) : super(key: key);
+  const MealCard({Key? key, required this.meal}) : super(key: key);  // Constructor que recibe el mapa de comida como parámetro.
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      elevation: 4, 
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: InkWell(
         onTap: () => _showMealPopup(context),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start, 
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+            ClipRRect( 
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)), 
               child: Image.network(
                 meal['strMealThumb'] ?? '',
                 height: 250,
-                width: double.infinity,
-                fit: BoxFit.cover,
+                width: double.infinity, 
+                fit: BoxFit.cover, 
                 errorBuilder: (context, error, stackTrace) {
                   return const Icon(Icons.image_not_supported, size: 100);
                 },
@@ -37,7 +36,7 @@ class MealCard extends StatelessWidget {
                 children: [
                   Text(
                     meal['strMeal'] ?? 'Nombre desconocido',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), 
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -53,39 +52,40 @@ class MealCard extends StatelessWidget {
     );
   }
 
+  // Método que muestra un popup con más detalles de la comida.
   void _showMealPopup(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           content: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min, 
             children: [
               Image.network(
-                meal['strMealThumb'] ?? '',
-                height: 200,
+                meal['strMealThumb'] ?? '', 
+                height: 200, 
                 errorBuilder: (context, error, stackTrace) {
                   return const Icon(Icons.image_not_supported, size: 100);
                 },
               ),
               const SizedBox(height: 16),
               Text(
-                meal['strMeal'] ?? 'Nombre desconocido',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                meal['strMeal'] ?? 'Nombre desconocido', 
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), 
               ),
               const SizedBox(height: 8),
               Text(meal['strCategory'] ?? 'Categoría desconocida'),
               const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuye los botones de manera uniforme.
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pop(context );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MealDetailsPage(mealId: meal['idMeal']),
+                          builder: (context) => MealDetailsPage(mealId: meal['idMeal']), 
                         ),
                       );
                     },
@@ -109,16 +109,17 @@ class MealCard extends StatelessWidget {
     );
   }
 
+  // Método que agrega la comida al carrito del usuario.
   Future<void> _addToCart(Map<String, dynamic> meal) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     User? user = FirebaseAuth.instance.currentUser ;
-    
+
     if (user != null) {
       await firestore.collection('users').doc(user.uid).collection('menu').add({
         'idMeal': meal['idMeal'],
-        'strMeal': meal['strMeal'],
-        'strCategory': meal['strCategory'],
+        'strMeal': meal['strMeal'], 
+        'strCategory': meal['strCategory'], 
         'strMealThumb': meal['strMealThumb'],
       });
     } else {

@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart'; 
+import 'package:firebase_auth/firebase_auth.dart'; 
+import 'package:cloud_firestore/cloud_firestore.dart'; 
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -8,29 +8,27 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Instancia de FirebaseAuth para gestionar la autenticación.
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Instancia de Firestore para gestionar la base de datos.
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
+  // Controladores de texto para capturar la entrada del usuario.
+  final TextEditingController _emailController = TextEditingController(); 
+  final TextEditingController _passwordController = TextEditingController(); 
+  final TextEditingController _nameController = TextEditingController(); 
   final TextEditingController _lastnameController = TextEditingController();
 
+  // Método para registrar un nuevo usuario.
   void _register() async {
     try {
-      // Crear usuario en Firebase Authentication
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
+        email: _emailController.text, 
+        password: _passwordController.text, 
       );
-
-      // Guardar información del usuario en Firestore
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'name': _nameController.text,
-        'email': _emailController.text,
-        'lastname':_lastnameController.text,
+        'name': _nameController.text, 
+        'email': _emailController.text, 
+        'lastname': _lastnameController.text, 
       });
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Usuario registrado con éxito!')),
       );
@@ -50,26 +48,26 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Column(
           children: [
             TextField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: 'Nombre'),
+              controller: _nameController, 
+              decoration: InputDecoration(labelText: 'Nombre'), 
             ),
             TextField(
-              controller: _lastnameController,
-              decoration: InputDecoration(labelText: 'Apellido'),
+              controller: _lastnameController, 
+              decoration: InputDecoration(labelText: 'Apellido'), 
             ),
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Correo electrónico'),
+              decoration: InputDecoration(labelText: 'Correo electrónico'), 
             ),
             TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Contraseña'),
-              obscureText: true,
+              controller: _passwordController, 
+              decoration: InputDecoration(labelText: 'Contraseña'), 
+              obscureText: true, // Oculta el texto ingresado (para la contraseña).
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _register,
-              child: Text('Registrar'),
+              child: Text('Registrar'), 
             ),
           ],
         ),

@@ -11,18 +11,20 @@ class MealDetailsPage extends StatefulWidget {
 }
 
 class _MealDetailsPageState extends State<MealDetailsPage> {
-  final MealProvider mealProvider = MealProvider();
-  Map<String, dynamic>? meal;
-  bool isLoading = true;
+  final MealProvider mealProvider = MealProvider(); 
+  Map<String, dynamic>? meal; // Variable para almacenar los detalles de la comida
+  bool isLoading = true; 
 
   @override
   void initState() {
-    super.initState();
+    super.initState(); 
     fetchMealDetails();
   }
 
+  // Método asíncrono para obtener los detalles de la comida
   Future<void> fetchMealDetails() async {
     try {
+      // Intenta obtener los detalles de la comida usando el ID
       var fetchedMeal = await mealProvider.getMealDetail(widget.mealId);
       setState(() {
         meal = fetchedMeal;
@@ -38,81 +40,84 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(meal?['strMeal'] ?? 'Detalles de la comida'),
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : meal != null
-              ? SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Image.network(
-                        meal!['strMealThumb'] ?? '',
-                        height: 250,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(Icons.image_not_supported, size: 100);
-                        },
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(meal?['strMeal'] ?? 'Detalles de la comida'),
+          ),
+          body: isLoading
+              ? Center(child: CircularProgressIndicator()) 
+              : meal != null 
+                  ? SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.network(
+                            meal!['strMealThumb'] ?? '', 
+                            height: 250, 
+                            width: double.infinity, 
+                            fit: BoxFit.cover, 
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(Icons.image_not_supported, size: 100); 
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0), 
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start, 
+                              children: [
+                                Text('Categoría: ${meal!['strCategory'] ?? 'Desconocido'}'),
+                                SizedBox(height: 8), 
+                                Text('Área: ${meal!['strArea'] ?? 'Desconocido'}'),
+                                SizedBox(height: 16), 
+                                Text('Ingredientes:', style: TextStyle(fontWeight: FontWeight.bold)),
+                                SizedBox(height: 8), 
+                                _buildIngredientsGrid(meal!), 
+                                SizedBox(height: 16),
+                                Text('Instrucciones:', style: TextStyle(fontWeight: FontWeight.bold)),
+                                SizedBox(height: 8), 
+                                Text(meal!['strInstructions'] ?? 'Instrucciones no disponibles'),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Categoría: ${meal!['strCategory'] ?? 'Desconocido'}'),
-                            SizedBox(height: 8),
-                            Text('Área: ${meal!['strArea'] ?? 'Desconocido'}'),
-                            SizedBox(height: 16),
-                            Text('Ingredientes:', style: TextStyle(fontWeight: FontWeight.bold)),
-                            SizedBox(height: 8),
-                            _buildIngredientsGrid(meal!),
-                            SizedBox(height: 16),
-                            Text('Instrucciones:', style: TextStyle(fontWeight: FontWeight.bold)),
-                            SizedBox(height: 8),
-                            Text(meal!['strInstructions'] ?? 'Instrucciones no disponibles'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : Center(child: Text('No se encontraron detalles para esta comida')),
+                    )
+              : Center(
+                  child: Text('No se encontraron detalles para esta comida')
+                ),
     );
   }
 
+  // Método para construir una cuadrícula de ingredientes
   Widget _buildIngredientsGrid(Map<String, dynamic> meal) {
-    List<Map<String, String>> ingredients = mealProvider.getIngredients(meal);
+    List<Map<String, String>> ingredients = mealProvider.getIngredients(meal); 
     return GridView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true, // Permite que la cuadrícula se ajuste al tamaño de su contenido
+      physics: NeverScrollableScrollPhysics(), // Desactiva el desplazamiento de la cuadrícula
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        childAspectRatio: 0.8,
+        crossAxisCount: 3, // Número de columnas en la cuadrícula
+        childAspectRatio: 0.8, // Relación de aspecto de los hijos
       ),
-      itemCount: ingredients.length,
+      itemCount: ingredients.length, 
       itemBuilder: (context, index) {
         return Card(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center, 
             children: [
               Image.network(
-                ingredients[index]['image']!,
+                ingredients[index]['image']!, 
                 height: 50,
-                width: 50,
-                fit: BoxFit.cover,
+                width: 50, 
+                fit: BoxFit.cover, 
                 errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.image_not_supported, size: 50);
+                  return Icon(Icons.image_not_supported, size: 50); 
                 },
               ),
-              SizedBox(height: 4),
+              SizedBox(height: 4), 
               Text(
                 ingredients[index]['name']!,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12),
+                textAlign: TextAlign.center, 
+                style: TextStyle(fontSize: 12), 
               ),
               Text(
                 ingredients[index]['measure']!,

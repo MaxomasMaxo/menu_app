@@ -33,24 +33,23 @@ class _BottomNavPageState extends State<BottomNavPage> {
     ];
   }
 
+  // Método para borrar el carrito de compras del usuario
   Future<void> _borrarCarrito() async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    User? user = FirebaseAuth.instance.currentUser ;
+    User? user = FirebaseAuth.instance.currentUser ; 
 
     if (user != null) {
-      CollectionReference menuCollection = firestore.collection('users').doc(user.uid).collection('menu');
-
+      CollectionReference menuCollection = firestore.collection('users').doc(user.uid).collection('menu');      // Obtiene los documentos del carrito
       QuerySnapshot snapshot = await menuCollection.get();
-
+      // Elimina cada documento del carrito
       for (var doc in snapshot.docs) {
         await menuCollection.doc(doc.id).delete();
       }
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Carrito borrado')),
       );
     } else {
-      print("No hay usuario autenticado.");
+      print("No hay usuario autenticado."); 
     }
   }
 
@@ -58,8 +57,8 @@ class _BottomNavPageState extends State<BottomNavPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_paginas[_currentIndex]['texto'], style: TextStyle(color: Colors.white)),
-        backgroundColor: Color(_paginas[_currentIndex]['color']),
+        title: Text(_paginas[_currentIndex]['texto'], style: TextStyle(color: Colors.white)), 
+        backgroundColor: Color(_paginas[_currentIndex]['color']), 
         actions: [
           Builder(
             builder: (BuildContext context) {
@@ -100,7 +99,7 @@ class _BottomNavPageState extends State<BottomNavPage> {
               leading: Icon(Icons.shopping_cart),
               title: Text('Carrito de Compras'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context); 
                 setState(() {
                   _currentIndex = 2; 
                 });
@@ -115,7 +114,7 @@ class _BottomNavPageState extends State<BottomNavPage> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.info ),
+              leading : Icon(Icons.info),
               title: Text('Información'),
               onTap: () {
                 Navigator.pop(context);
@@ -136,7 +135,7 @@ class _BottomNavPageState extends State<BottomNavPage> {
                     MaterialPageRoute(builder: (context) => LoginPage()),
                   );
                 } catch (e) {
-                  print('Error al cerrar sesión: $e');
+                  print('Error al cerrar sesión: $e'); 
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -158,16 +157,16 @@ class _BottomNavPageState extends State<BottomNavPage> {
       ),
       body: _paginas[_currentIndex]['pagina'],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+        currentIndex: _currentIndex, 
         onTap: (index) {
           setState(() {
-            _currentIndex = index;
+            _currentIndex = index; 
           });
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Busqueda'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: 'Cesta'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'), 
+          BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: 'Cesta'), 
         ],
       ),
     );

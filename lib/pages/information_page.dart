@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class InformationPage extends StatelessWidget {
-  const InformationPage({super.key});
+  const InformationPage({super.key}); 
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class InformationPage extends StatelessWidget {
               'Información sobre Flutter:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 10), 
             Text(
               'Flutter es un framework de UI de código abierto creado por Google. Permite crear aplicaciones nativas para móviles, web y escritorio a partir de una única base de código.',
               textAlign: TextAlign.justify,
@@ -47,9 +47,11 @@ class InformationPage extends StatelessWidget {
     );
   }
 
+  // Método construir la representación de un miembro del equipo
   Widget _buildTeamMember(String name, String imagePath) {
     return Row(
       children: [
+        // Avatar circular que muestra la imagen del miembro del equipo
         CircleAvatar(
           radius: 30,
           backgroundImage: AssetImage(imagePath),

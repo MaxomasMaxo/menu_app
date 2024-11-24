@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'bottom_nav_page.dart';
+import 'bottom_nav_page.dart'; 
 import 'register_page.dart';
 
 class LoginPage extends StatelessWidget {
+  // Controladores para los campos de texto de email y contraseña.
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -12,15 +13,15 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Iniciar Sesión', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xffff8b00), 
-        centerTitle: true,
-        elevation: 2,
+        backgroundColor: const Color(0xffff8b00),
+        centerTitle: true, 
+        elevation: 2, 
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0), 
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.stretch, 
             children: [
               const SizedBox(height: 32),
               Center(
@@ -29,7 +30,7 @@ class LoginPage extends StatelessWidget {
                   backgroundColor: const Color(0xffff8b00),
                   child: const Icon(
                     Icons.lock_outline,
-                    size: 60,
+                    size: 60, 
                     color: Colors.white,
                   ),
                 ),
@@ -39,7 +40,7 @@ class LoginPage extends StatelessWidget {
                 controller: emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  prefixIcon: const Icon(Icons.person),
+                  prefixIcon: const Icon(Icons.person), // Icono que aparece antes del texto.
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -50,22 +51,22 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 16),
               TextField(
                 controller: passwordController,
-                obscureText: true,
+                obscureText: true, // Oculta el texto ingresado (para seguridad).
                 decoration: InputDecoration(
                   labelText: 'Contraseña',
-                  prefixIcon: const Icon(Icons.lock),
+                  prefixIcon: const Icon(Icons.lock), // Icono que aparece antes del texto.
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  filled: true,
+                  filled: true, 
                   fillColor: Colors.grey[200],
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 32), 
               ElevatedButton(
-                onPressed: () async {
-                  String emailOrPhone = emailController.text.trim();
-                  String password = passwordController.text.trim();
+                onPressed: () async { 
+                  String emailOrPhone = emailController.text.trim(); 
+                  String password = passwordController.text.trim(); 
 
                   try {
                     UserCredential userCredential =
@@ -74,7 +75,7 @@ class LoginPage extends StatelessWidget {
                       password: password,
                     );
 
-                    print('Usuario autenticado: ${userCredential.user?.email}');
+                    print('Usuario autenticado: ${userCredential.user?.email}'); 
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const BottomNavPage()),
@@ -82,21 +83,21 @@ class LoginPage extends StatelessWidget {
                   } on FirebaseAuthException catch (e) {
                     String message;
                     if (e.code == 'user-not-found') {
-                      message = 'No hay ningún usuario registrado con este correo.';
+                      message = 'No hay ningún usuario registrado con este correo.'; 
                     } else if (e.code == 'wrong-password') {
-                      message = 'La contraseña es incorrecta.';
+                      message = 'La contraseña es incorrecta.'; 
                     } else {
-                      message = 'Error al iniciar sesión. Intenta de nuevo.';
+                      message = 'Error al iniciar sesión. Intenta de nuevo.'; 
                     }
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
                         title: const Text('Error'),
-                        content: Text(message),
+                        content: Text(message), 
                         actions: [
                           TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Cerrar'),
+                            onPressed: () => Navigator.of(context).pop(), 
+                            child: const Text('Cerrar'), 
                           ),
                         ],
                       ),
@@ -106,25 +107,25 @@ class LoginPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xffff8b00),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(10.0), 
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0), 
                 ),
                 child: const Text(
-                  'Iniciar Sesión',
-                  style: TextStyle(color:Colors.white,fontSize: 16, fontWeight: FontWeight.bold),
+                  'Iniciar Sesión', 
+                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold), 
                 ),
               ),
-              SizedBox(height: 20),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RegisterPage()),
-                );
-              },
-              child: Text('¿No tienes una cuenta? Regístrate aquí'),
-            ),
+              SizedBox(height: 20), 
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                  );
+                },
+                child: Text('¿No tienes una cuenta? Regístrate aquí'), 
+              ),
             ],
           ),
         ),

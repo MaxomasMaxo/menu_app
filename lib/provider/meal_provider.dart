@@ -1,5 +1,5 @@
-import 'dart:convert'; // Para convertir respuestas JSON a Mapas y Listas de Dart.
-import 'package:http/http.dart' as http; // Paquete HTTP para hacer solicitudes.
+import 'dart:convert'; 
+import 'package:http/http.dart' as http;
 
 class MealProvider {
   // URL base de la API de TheMealDB para filtrar comidas por categoría.
