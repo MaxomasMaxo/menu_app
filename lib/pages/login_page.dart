@@ -29,7 +29,7 @@ class LoginPage extends StatelessWidget {
                   radius: 50,
                   backgroundColor: const Color(0xffff8b00),
                   child: const Icon(
-                    Icons.lock_outline,
+                    Icons.restaurant_menu,
                     size: 60, 
                     color: Colors.white,
                   ),
