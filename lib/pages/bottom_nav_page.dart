@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:menu_app/pages/information_page.dart';
 import 'package:menu_app/pages/login_page.dart';
+import 'package:menu_app/pages/profile_page.dart';
 import 'package:menu_app/pages/tab_cesta_page.dart';
 import 'package:menu_app/pages/tab_home_page.dart';
 import 'package:menu_app/pages/tab_minuta_page.dart';
@@ -87,17 +88,32 @@ class _BottomNavPageState extends State<BottomNavPage> {
               decoration: BoxDecoration(
                 color: Color(_paginas[_currentIndex]['color']),
               ),
-              child: Text(
-                'Menú',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()),
+                  );
+                },
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, color: Color(_paginas[_currentIndex]['color'])),
+                      radius: 30,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Perfil',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ],
                 ),
               ),
             ),
             ListTile(
               leading: Icon(Icons.shopping_cart),
-              title: Text('Carrito de Compras'),
+              title: Text('Cesta'),
               onTap: () {
                 Navigator.pop(context); 
                 setState(() {

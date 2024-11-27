@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:menu_app/pages/bottom_nav_page.dart';
 import 'package:menu_app/provider/meal_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -107,7 +108,27 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                                   padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                                 ),
                               ),
+                            const SizedBox(height: 16),
                           ],
+                        ),
+                      ),
+                       Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const BottomNavPage()),
+                    );
+                          },
+                          child: const Text(' Volver al inicio'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xffff8b00),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                          ),
                         ),
                       ),
                     ],

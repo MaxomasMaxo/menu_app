@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:menu_app/pages/meal_details_page.dart';
 
 class TabCestaPage extends StatefulWidget {
   const TabCestaPage({super.key});
@@ -29,7 +30,6 @@ class _TabCestaPageState extends State<TabCestaPage> {
         meals = json.decode(response.body)['meals'];
       });
     } else {
-      // Manejo de errores
     }
   }
 
@@ -39,53 +39,36 @@ class _TabCestaPageState extends State<TabCestaPage> {
 
     if (user != null) {
       QuerySnapshot snapshot = await firestore.collection('users').doc(user.uid).collection('menu').get();
-      for (var doc in snapshot.docs) {
-        setState(() {
-          selectedMeals.add(doc.data() as Map<String, dynamic>);
-        });
-      }
+      setState(() {
+        selectedMeals = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+      });
     }
   }
 
-  Future<void> addToCart(Map<String, dynamic> meal) async {
+  Future<void> clearCart() async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     User? user = FirebaseAuth.instance.currentUser ;
 
     if (user != null) {
-      await firestore.collection('users').doc(user.uid).collection('menu').add(meal);
+      // Obtener todos los documentos en la colección 'menu'
+      QuerySnapshot snapshot = await firestore.collection('users').doc(user.uid).collection('menu').get();
+      for (var doc in snapshot.docs) {
+        await firestore.collection('users').doc(user.uid).collection('menu').doc(doc.id).delete();
+      }
+      // Actualizar la lista local
       setState(() {
-        selectedMeals.add(meal);
+        selectedMeals.clear();
       });
     } else {
       print("No hay usuario autenticado.");
     }
   }
 
-  void confirmPurchase() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Compra Confirmada'),
-          content: Text('Has comprado: ${selectedMeals.map((meal) => meal['strMeal']).join(', ')}'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cerrar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Carrito de Compras'),
+        title: Text('Comidas seleccionadas'),
       ),
       body: Column(
         children: [
@@ -96,11 +79,16 @@ class _TabCestaPageState extends State<TabCestaPage> {
                 return ListTile(
                   title: Text(selectedMeals[index]['strMeal']),
                   trailing: IconButton(
-                    icon: Icon(Icons.remove_circle),
+                    icon: Icon(Icons.info),
                     onPressed: () {
-                      setState(() {
-                        selectedMeals.removeAt(index);
-                      });
+                        print(selectedMeals[index]['idMeal']);
+                        Navigator.pop(context );
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MealDetailsPage(mealId: selectedMeals[index]['idMeal']), 
+                        ),
+                      );
                     },
                   ),
                 );
@@ -110,23 +98,11 @@ class _TabCestaPageState extends State<TabCestaPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-              onPressed: selectedMeals.isEmpty ? null : confirmPurchase,
-              child: Text('Confirmar Compra'),
+              onPressed: selectedMeals.isEmpty ? null : clearCart,
+              child: Text('Borrar Cesta'),
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Aquí puedes agregar lógica para seleccionar comidas
-          // Por ejemplo, abrir un diálogo o una nueva pantalla
-          // Ejemplo: agregar la primera comida como demostración
-          if (meals.isNotEmpty) {
-            addToCart(meals[0]); // Agregar la primera comida como demostración
-          }
-        },
-        child: Icon(Icons.add),
-        tooltip: 'Agregar Comida',
       ),
     );
   }
