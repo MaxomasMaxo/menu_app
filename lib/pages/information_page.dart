@@ -20,7 +20,7 @@ class InformationPage extends StatelessWidget {
             SizedBox(height: 20),
             _buildTeamMember('Maxo', 'assets/images/member1.png'),
             _buildTeamMember('Cristian Sarabia', 'assets/images/member2.png'),
-            _buildTeamMember('~y6', 'assets/images/member3.png'),
+            _buildTeamMember('Yang', 'assets/images/member3.png'),
             SizedBox(height: 20),
             Text(
               'Información sobre Flutter:',
